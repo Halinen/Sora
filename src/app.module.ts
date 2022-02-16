@@ -6,7 +6,7 @@ import { UserModule } from './modules/user/user.module';
 import { Log4jsModule } from '@nestx-log4js/core';
 
 @Module({
-  imports: [DbModule, UserModule, Log4jsModule],
+  imports: [DbModule, UserModule, Log4jsModule.forRoot()],
   controllers: [AppController],
   providers: [AppService],
 })

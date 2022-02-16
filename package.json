@@ -27,6 +27,7 @@
     "@nestjs/platform-express": "^8.0.0",
     "@nestjs/swagger": "^5.2.0",
     "@nestx-log4js/core": "^1.5.1",
+    "crypto": "^1.0.1",
     "mongoose": "^6.2.1",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",

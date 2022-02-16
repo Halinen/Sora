@@ -1,10 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { IResponse } from 'src/interface/response.interface';
 import { User } from 'src/interface/user.interface';
+
+const logger = new Logger('user.service');
 
 @Injectable()
 export class UserService {
+  private response: IResponse;
   constructor(
     @InjectModel('USER_MODEL') private readonly userModel: Model<User>,
   ) {}
@@ -17,26 +21,49 @@ export class UserService {
    * @memberof UserService
    */
   public async regist(user: User) {
-    return this.userModel
-      .find({
-        phone: user.phone,
-      })
+    return this.findOneByPhone(user.phone)
       .then((res) => {
         if (res.length !== 0) {
-          console.log('该用户已经注册');
-          throw Error('用户已注册');
+          this.response = {
+            code: 1,
+            msg: '当前手机号已注册',
+          };
+          throw this.response;
         }
       })
-      .then(() => {
+      .then(async () => {
         try {
           const createUser = new this.userModel(user);
-          return createUser.save();
+          await createUser.save();
+          this.response = {
+            code: 0,
+            msg: '用户注册成功',
+          };
+          return this.response;
         } catch (error) {
-          throw Error('保存用户失败' + error);
+          this.response = {
+            code: 2,
+            msg: '用户注册失败，请联系相关负责人' + error,
+          };
+          throw this.response;
         }
       })
       .catch((err) => {
-        console.warn(`发生问题——${err}`);
+        logger.log(`${user.phone}:${err.msg}`);
+        return this.response;
       });
+  }
+  /**
+   * @description
+   * @date 16/02/2022
+   * @private 通过手机号查找用户
+   * @param {string} phone
+   * @return {*}
+   * @memberof UserService
+   */
+  private async findOneByPhone(phone: string) {
+    return await this.userModel.find({
+      phone,
+    });
   }
 }

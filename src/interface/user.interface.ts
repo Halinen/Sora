@@ -17,4 +17,7 @@ export class User extends Document {
     example: '123456',
   })
   readonly password: string;
+
+  @Prop()
+  readonly salt?: string;
 }
