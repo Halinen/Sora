@@ -11,7 +11,7 @@ import { UserService } from './user.service';
  */
 @Controller('user')
 @ApiTags('用户模块')
-@UseGuards(AuthGuard('jwt'))
+// @UseGuards(AuthGuard('jwt'))
 @ApiBearerAuth('jwt')
 export class UserController {
   constructor(private userService: UserService) {}

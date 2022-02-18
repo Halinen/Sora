@@ -83,6 +83,27 @@ export class AuthService {
         return this.response;
       });
   }
+  /**
+   * @description 用户修改方法
+   * @date 18/02/2022
+   * @param {User} user
+   * @return {*}
+   * @memberof AuthService
+   */
+  public async alter(user: User) {
+    return this.userService.findOneByPhone(user.phone).then(async () => {
+      return await this.userModel
+        .findOneAndUpdate({ phone: user.phone }, user, {}, () => {
+          logger.log(`用户${user.phone}修改密码成功`);
+        })
+        .then(() => {
+          this.response = {
+            code: 0,
+            msg: '用户修改成功',
+          };
+        });
+    });
+  }
 
   /**
    * @description 用户登录验证

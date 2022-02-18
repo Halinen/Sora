@@ -1,10 +1,11 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { UserService } from 'src/modules/user/user.service';
 import { JwtStrategy } from './jwt.strategy';
 import { JWT_CONSTANT } from './jwt.constant';
 import { JwtModule } from '@nestjs/jwt';
+import { HashPasswordMiddleware } from 'src/middlewares/hash-password.middleware';
 
 @Module({
   imports: [
@@ -15,4 +16,12 @@ import { JwtModule } from '@nestjs/jwt';
   providers: [AuthService, UserService, JwtStrategy],
   controllers: [AuthController],
 })
-export class AuthModule {}
+export class AuthModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(HashPasswordMiddleware)
+      .forRoutes('auth/regist')
+      .apply(HashPasswordMiddleware)
+      .forRoutes('auth/alter');
+  }
+}
